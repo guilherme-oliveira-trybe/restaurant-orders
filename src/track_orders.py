@@ -3,6 +3,7 @@ from analyze_log import (
     plates_never_ask_by_client,
     days_never_went_to_restaurant,
 )
+from collections import Counter
 
 
 class TrackOrders:
@@ -26,19 +27,12 @@ class TrackOrders:
         return days_never_went_to_restaurant(customer, self.orders)
 
     def get_busiest_day(self):
-        busiest_day = {}
-        for order in self.orders:
-            if order["dia"] not in busiest_day:
-                busiest_day[order["dia"]] = 0
-            else:
-                busiest_day[order["dia"]] += 1
+        busiest_day = self.count_days(self.orders)
         return str(max(busiest_day, key=busiest_day.get))
 
     def get_least_busy_day(self):
-        least_busy_day = {}
-        for order in self.orders:
-            if order["dia"] not in least_busy_day:
-                least_busy_day[order["dia"]] = 0
-            else:
-                least_busy_day[order["dia"]] += 1
+        least_busy_day = self.count_days(self.orders)
         return str(min(least_busy_day, key=least_busy_day.get))
+
+    def count_days(self, orders):
+        return Counter([order["dia"] for order in orders])
