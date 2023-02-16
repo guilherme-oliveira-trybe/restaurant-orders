@@ -23,6 +23,11 @@ class InventoryControl:
         self.orders = []
 
     def add_new_order(self, customer, order, day):
+        ingredients_used = self.count_ingredients_by_order()
+        for i in self.INGREDIENTS[order]:
+            if ingredients_used[i] >= self.MINIMUM_INVENTORY[i]:
+                return False
+
         self.orders.append({"cliente": customer, "pedido": order, "dia": day})
 
     def get_quantities_to_buy(self):
@@ -42,3 +47,15 @@ class InventoryControl:
             for i in ingredients:
                 ingredients_used.append(i)
         return Counter(ingredients_used)
+
+    def get_available_dishes(self):
+        menu = set([order for order in self.INGREDIENTS.keys()])
+        order_out = set()
+        ingredients_used = self.count_ingredients_by_order()
+        for order, ingredients in self.INGREDIENTS.items():
+            for key, value in ingredients_used.items():
+                if value >= self.MINIMUM_INVENTORY[key]:
+                    if key in ingredients:
+                        order_out.add(order)
+
+        return menu.difference(order_out)
